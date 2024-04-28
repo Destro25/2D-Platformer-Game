@@ -1,1 +1,6 @@
 *.sln
+.vs/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Ll]ibrary/
+/[Oo]bj/

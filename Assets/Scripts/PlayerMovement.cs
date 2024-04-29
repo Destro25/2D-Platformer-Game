@@ -8,6 +8,8 @@ public class PlayerMovement : MonoBehaviour
     private Animator animPlayer;
     private SpriteRenderer spritePlayer;
 
+    private enum DisplayAnimation {anim_idle, anim_running, anim_jumping, anim_falling}
+
     float xAxis = 0f;
     [SerializeField] private float moveSpeed = 7f;
     [SerializeField] private float jumpPower = 14f;
@@ -37,20 +39,33 @@ public class PlayerMovement : MonoBehaviour
 
     private void UpdateAnimations()
     {
+        DisplayAnimation status;
+
         if (xAxis > 0f)
         {
-            animPlayer.SetBool("IsRunning", true);
+            status = DisplayAnimation.anim_running;
             spritePlayer.flipX = false;
         }
         else if (xAxis < 0f)
         {
-            animPlayer.SetBool("IsRunning", true);
+            status = DisplayAnimation.anim_running;
             spritePlayer.flipX = true;
         }
         else
         {
-            animPlayer.SetBool("IsRunning", false);
+            status = DisplayAnimation.anim_idle;
         }
+
+        if (rigidbodyPlayer.velocity.y > 0.01f)
+        {
+            status = DisplayAnimation.anim_jumping;
+        }
+        else if (rigidbodyPlayer.velocity.y < -0.01f)
+        {
+            status = DisplayAnimation.anim_falling;
+        }
+
+        animPlayer.SetInteger("AnimState", (int)status);
     }
 
 }

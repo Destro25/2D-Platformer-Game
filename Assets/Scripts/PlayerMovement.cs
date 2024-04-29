@@ -7,6 +7,9 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rigidbodyPlayer;
     private Animator animPlayer;
     private SpriteRenderer spritePlayer;
+    private BoxCollider2D collBody;
+
+    [SerializeField] private LayerMask jumpableTerrain;
 
     private enum DisplayAnimation {anim_idle, anim_running, anim_jumping, anim_falling}
 
@@ -20,6 +23,7 @@ public class PlayerMovement : MonoBehaviour
         rigidbodyPlayer = GetComponent<Rigidbody2D>();
         animPlayer = GetComponent<Animator>();
         spritePlayer = GetComponent<SpriteRenderer>();
+        collBody = GetComponent<BoxCollider2D>();
     }
 
     // Update is called once per frame
@@ -29,7 +33,7 @@ public class PlayerMovement : MonoBehaviour
         rigidbodyPlayer.velocity = new Vector2(xAxis * moveSpeed, rigidbodyPlayer.velocity.y);
 
         //Jumping
-        if(Input.GetButtonDown("Jump"))
+        if(Input.GetButtonDown("Jump") && TouchingJumpableTerrain())
         {
             rigidbodyPlayer.velocity = new Vector2(rigidbodyPlayer.velocity.x, jumpPower);
         }
@@ -66,6 +70,11 @@ public class PlayerMovement : MonoBehaviour
         }
 
         animPlayer.SetInteger("AnimState", (int)status);
+    }
+
+    private bool TouchingJumpableTerrain()
+    {
+        return Physics2D.BoxCast(collBody.bounds.center, collBody.bounds.size, 0f, Vector2.down, 0.01f, jumpableTerrain);
     }
 
 }

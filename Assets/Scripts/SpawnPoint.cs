@@ -6,6 +6,7 @@ public class SpawnPoint : MonoBehaviour
 {
     private static Vector2 spawn;
     private static Rigidbody2D rigidbodyPlayer;
+    private static Animator animCheckpoint = null;
     // Start is called before the first frame update
     private void Start()
     {
@@ -17,7 +18,12 @@ public class SpawnPoint : MonoBehaviour
     {
         if(collision.gameObject.CompareTag("Checkpoint"))
         {
-            spawn = collision.transform.position;
+            animCheckpoint = collision.GetComponent<Animator>();
+            if(animCheckpoint.GetBool("isActive") == false)
+            {
+                spawn = collision.transform.position;
+                animCheckpoint.SetBool("isActive", true);
+            }
         }
     }
 

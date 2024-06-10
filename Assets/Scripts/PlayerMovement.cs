@@ -20,8 +20,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float jumpPower = 14f;
 
     private bool hasDoubleJumpe;
-
-    // Start is called before the first frame update
+    [SerializeField] private AudioSource jumpSoundEffect;
     private void Start()
     {
         rigidbodyPlayer = GetComponent<Rigidbody2D>();
@@ -31,7 +30,6 @@ public class PlayerMovement : MonoBehaviour
         collFeet = GetComponent<BoxCollider2D>();
     }
 
-    // Update is called once per frame
     private void Update()
     {
         xAxis = Input.GetAxisRaw("Horizontal");
@@ -42,6 +40,7 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButtonDown("Jump") && 
             (TouchingJumpableTerrain() || hasDoubleJumpe))
         {
+            jumpSoundEffect.Play();
             rigidbodyPlayer.velocity = new Vector2(rigidbodyPlayer.velocity.x, jumpPower);
             if(TouchingJumpableTerrain() == false)
             {

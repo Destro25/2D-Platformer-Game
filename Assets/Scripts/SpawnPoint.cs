@@ -7,6 +7,7 @@ public class SpawnPoint : MonoBehaviour
     private static Vector2 spawn;
     private static Rigidbody2D rigidbodyPlayer;
     private static Animator animCheckpoint = null;
+    [SerializeField] private AudioSource checkpointTrigger;
     // Start is called before the first frame update
     private void Start()
     {
@@ -21,6 +22,7 @@ public class SpawnPoint : MonoBehaviour
             animCheckpoint = collision.GetComponent<Animator>();
             if(animCheckpoint.GetBool("isActive") == false)
             {
+                checkpointTrigger.Play();
                 spawn = collision.transform.position;
                 animCheckpoint.SetBool("isActive", true);
             }

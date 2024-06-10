@@ -62,6 +62,7 @@
     <Compile Include="Assets\Scripts\FollowerWaypoints.cs" />
     <Compile Include="Assets\Scripts\CapturePlayer.cs" />
     <Compile Include="Assets\Scripts\CameraScript.cs" />
+    <Compile Include="Assets\Scripts\RotateObject.cs" />
     <Compile Include="Assets\Scripts\PlayerMovement.cs" />
     <Compile Include="Assets\Scripts\SpawnPoint.cs" />
   </ItemGroup>

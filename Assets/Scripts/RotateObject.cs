@@ -7,6 +7,6 @@ public class RotateObject : MonoBehaviour
     [SerializeField] private float rotationSpeed = 1.8f;
     private void Update()
     {
-        transform.Rotate(0, 0, 360 * rotationSpeed * Time.deltaTime);
+        transform.Rotate(0, 0, 360 * Time.deltaTime * rotationSpeed);
     }
 }

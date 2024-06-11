@@ -59,12 +59,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\PlayerDeath.cs" />
+    <Compile Include="Assets\Scripts\GameEnd.cs" />
     <Compile Include="Assets\Scripts\FollowerWaypoints.cs" />
+    <Compile Include="Assets\Scripts\LevelFinishScript.cs" />
     <Compile Include="Assets\Scripts\CapturePlayer.cs" />
     <Compile Include="Assets\Scripts\CameraScript.cs" />
     <Compile Include="Assets\Scripts\RotateObject.cs" />
     <Compile Include="Assets\Scripts\PlayerMovement.cs" />
     <Compile Include="Assets\Scripts\SpawnPoint.cs" />
+    <Compile Include="Assets\Scripts\GameStart.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

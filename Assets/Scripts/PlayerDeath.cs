@@ -7,7 +7,7 @@ public class PlayerDeath : MonoBehaviour
     private Rigidbody2D rigidbodyPlayer;
     private Animator animPlayer;
     private BoxCollider2D collPlayer;
-    // Start is called before the first frame update
+    
     [SerializeField] private float DeathFloor = -14.0f;
     [SerializeField] private AudioSource deathSoundEffect;
     private void Start()

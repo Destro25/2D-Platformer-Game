@@ -11,14 +11,13 @@ public class FollowerWaypoints : MonoBehaviour
 
     private void Update()
     {
-        if (Vector2.Distance(waypoints[currentWaypoint].transform.position, transform.position) < 0.1f)
+        Vector2 currentWaypointPosition = waypoints[currentWaypoint].transform.position;
+
+        if (Vector2.Distance(currentWaypointPosition, transform.position) < 0.1f)
         {
-            currentWaypoint++;
-            if (currentWaypoint >= waypoints.Length)
-            {
-                currentWaypoint = 0;
-            }
+            currentWaypoint = (currentWaypoint + 1) % waypoints.Length;
         }
-        transform.position = Vector2.MoveTowards(transform.position, waypoints[currentWaypoint].transform.position, Time.deltaTime * speed);
+
+        transform.position = Vector2.MoveTowards(transform.position, currentWaypointPosition, Time.deltaTime * speed);
     }
 }

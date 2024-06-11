@@ -6,9 +6,9 @@ public class SpawnPoint : MonoBehaviour
 {
     private static Vector2 spawn;
     private static Rigidbody2D rigidbodyPlayer;
-    private static Animator animCheckpoint = null;
+    private static Animator checkpointAnim = null;
     [SerializeField] private AudioSource checkpointTrigger;
-    // Start is called before the first frame update
+    
     private void Start()
     {
         rigidbodyPlayer = GetComponent<Rigidbody2D>();
@@ -19,12 +19,13 @@ public class SpawnPoint : MonoBehaviour
     {
         if(collision.gameObject.CompareTag("Checkpoint"))
         {
-            animCheckpoint = collision.GetComponent<Animator>();
-            if(animCheckpoint.GetBool("isActive") == false)
+            checkpointAnim = collision.GetComponent<Animator>();
+            if(checkpointAnim.GetInteger("CheckpointState") == 0)
             {
                 checkpointTrigger.Play();
+                ResetOtherCheckpoints();
+                checkpointAnim.SetInteger("CheckpointState", 1);
                 spawn = collision.transform.position;
-                animCheckpoint.SetBool("isActive", true);
             }
         }
     }
@@ -32,5 +33,19 @@ public class SpawnPoint : MonoBehaviour
     public static void Spawn()
     {
         rigidbodyPlayer.transform.position = spawn;
+    }
+
+    private void ResetOtherCheckpoints()
+    {
+        GameObject[] otherCheckpoints = GameObject.FindGameObjectsWithTag("Checkpoint");
+        foreach (GameObject otherCheckpoint in otherCheckpoints)
+        {
+            if(otherCheckpoint == gameObject)
+            {
+                continue;
+            }
+            otherCheckpoint.GetComponent<Animator>().SetInteger("CheckpointState", 0);
+        }
+
     }
 }

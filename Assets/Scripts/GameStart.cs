@@ -9,4 +9,26 @@ public class GameStart : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
+
+    public void SelectLevel()
+    {
+        SceneManager.LoadScene(5);
+    }
+
+    public void PlayLevel1()
+    {
+        SceneManager.LoadScene(1);
+    }
+    public void PlayLevel2()
+    {
+        SceneManager.LoadScene(2);
+    }
+    public void PlayLevel3()
+    {
+        SceneManager.LoadScene(3);
+    }
+    public void Back()
+    {
+        SceneManager.LoadScene(0);
+    }
 }

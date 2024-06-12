@@ -26,17 +26,20 @@ public class PlayerMovement : MonoBehaviour
     private bool isTouchingWall = false;
     private bool isStickingToWall = false;
     [SerializeField] private AudioSource jumpSoundEffect;
+    [SerializeField] private AudioSource dashSoundEffect;
     [SerializeField] private LayerMask wallLayer;
     [SerializeField] private float dashSpeed = 1f;
     [SerializeField] private float dashTime = 0.2f;
     [SerializeField] private float dashCooldown = 1f;
     private bool hasWaited = true;
     private bool isDashing = false;
+    private TrailRenderer trailSprite;
     private void Start()
     {
         rigidbodyPlayer = GetComponent<Rigidbody2D>();
         animPlayer = GetComponent<Animator>();
         spritePlayer = GetComponent<SpriteRenderer>();
+        trailSprite = GetComponent<TrailRenderer>();
         collBody = GetComponent<BoxCollider2D>();
         collFeet = GetComponent<BoxCollider2D>();
     }
@@ -107,9 +110,10 @@ public class PlayerMovement : MonoBehaviour
 
         float dashDirection = xAxis != 0f ? xAxis : (spritePlayer.flipX ? -1f : 1f);
         rigidbodyPlayer.velocity = new Vector2(dashSpeed * dashDirection, 0f);
-        //trail.emitting = true;
+        trailSprite.emitting = true;
+        dashSoundEffect.Play();
         yield return new WaitForSeconds(dashTime);
-        //trail.emitting = false;
+        trailSprite.emitting = false;
         rigidbodyPlayer.gravityScale = originalGravity;
         isDashing = false;
         yield return new WaitForSeconds(dashCooldown);

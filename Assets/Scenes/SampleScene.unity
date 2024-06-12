@@ -36025,6 +36025,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 660474757172409181, guid: 6cebc8e97ca604b4dab16c0437097111, type: 3}
+      propertyPath: wallLayer.m_Bits
+      value: 128
+      objectReference: {fileID: 0}
     - target: {fileID: 1952965277288866614, guid: 6cebc8e97ca604b4dab16c0437097111, type: 3}
       propertyPath: m_Name
       value: Player
@@ -36414,6 +36418,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2c7aeac2921e61f45aafcbd10746b3c8, type: 3}
+--- !u!1001 &8184837437034390529
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 229635508205177039, guid: 46ce6a6fb9cab9d4fa5d9b62fa42a36d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 3.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 229635508205177039, guid: 46ce6a6fb9cab9d4fa5d9b62fa42a36d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.55
+      objectReference: {fileID: 0}
+    - target: {fileID: 229635508205177039, guid: 46ce6a6fb9cab9d4fa5d9b62fa42a36d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 229635508205177039, guid: 46ce6a6fb9cab9d4fa5d9b62fa42a36d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 229635508205177039, guid: 46ce6a6fb9cab9d4fa5d9b62fa42a36d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 229635508205177039, guid: 46ce6a6fb9cab9d4fa5d9b62fa42a36d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 229635508205177039, guid: 46ce6a6fb9cab9d4fa5d9b62fa42a36d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 229635508205177039, guid: 46ce6a6fb9cab9d4fa5d9b62fa42a36d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 229635508205177039, guid: 46ce6a6fb9cab9d4fa5d9b62fa42a36d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 229635508205177039, guid: 46ce6a6fb9cab9d4fa5d9b62fa42a36d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6540398269144066576, guid: 46ce6a6fb9cab9d4fa5d9b62fa42a36d, type: 3}
+      propertyPath: m_Name
+      value: JumpableWall
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 46ce6a6fb9cab9d4fa5d9b62fa42a36d, type: 3}
 --- !u!1001 &8214759892765104291
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -36602,3 +36663,4 @@ SceneRoots:
   - {fileID: 3473615798257708995}
   - {fileID: 8732229377651236675}
   - {fileID: 772341933}
+  - {fileID: 8184837437034390529}

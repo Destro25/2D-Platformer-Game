@@ -13,14 +13,18 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private LayerMask jumpableTerrain;
 
-    private enum DisplayAnimation {anim_idle, anim_running, anim_jumping, anim_falling, anim_doubleJump}
+    private enum DisplayAnimation {anim_idle, anim_running, anim_jumping, anim_falling, anim_doubleJump, anim_wallHang}
 
     float xAxis = 0f;
     [SerializeField] private float moveSpeed = 7f;
     [SerializeField] private float jumpPower = 14f;
 
     private bool hasDoubleJumpe;
+    private bool hasWallJump;
+    private bool isTouchingWall = false;
+    private bool isStickingToWall = false;
     [SerializeField] private AudioSource jumpSoundEffect;
+    [SerializeField] private LayerMask wallLayer;
     private void Start()
     {
         rigidbodyPlayer = GetComponent<Rigidbody2D>();
@@ -35,36 +39,65 @@ public class PlayerMovement : MonoBehaviour
         xAxis = Input.GetAxisRaw("Horizontal");
         rigidbodyPlayer.velocity = new Vector2(xAxis * moveSpeed, rigidbodyPlayer.velocity.y);
 
+        StickingToAWall();
 
-        //Jumping
-        if (Input.GetButtonDown("Jump") && 
-            (TouchingJumpableTerrain() || hasDoubleJumpe))
+        if (Input.GetButtonDown("Jump"))
         {
-            jumpSoundEffect.Play();
-            rigidbodyPlayer.velocity = new Vector2(rigidbodyPlayer.velocity.x, jumpPower);
-            if(TouchingJumpableTerrain() == false)
+            if (TouchingJumpableTerrain() || hasDoubleJumpe || hasWallJump)
             {
-                hasDoubleJumpe = false;
-            }
-            else
-            {
-                hasDoubleJumpe = true;
+                jumpSoundEffect.Play();
+                rigidbodyPlayer.velocity = new Vector2(rigidbodyPlayer.velocity.x, jumpPower);
+
+                if (!TouchingJumpableTerrain())
+                {
+                    hasDoubleJumpe = false;
+                }
+                else
+                {
+                    hasDoubleJumpe = true;
+                }
+
+                if (!isStickingToWall) 
+                {
+                    hasWallJump = false;
+                }
+                else
+                {
+                    hasWallJump = true;
+                }    
+
             }
         }
 
-        if(TouchingJumpableTerrain() == true)
+        if (TouchingJumpableTerrain())
         {
             hasDoubleJumpe = true;
+        }
+
+        if (isStickingToWall)
+        {
+            hasWallJump = true;
         }
 
         UpdateAnimations();
     }
 
+
     private void UpdateAnimations()
     {
         DisplayAnimation status;
 
-        if (xAxis > 0f)
+        if(isStickingToWall && xAxis > 0f)
+        {
+            status = DisplayAnimation.anim_wallHang;
+            spritePlayer.flipX = false;
+        }
+        else if(isStickingToWall && xAxis < 0f)
+        {
+            status = DisplayAnimation.anim_wallHang;
+            spritePlayer.flipX = true;
+        }
+        else if (xAxis > 0f)
         {
             status = DisplayAnimation.anim_running;
             spritePlayer.flipX = false;
@@ -98,6 +131,24 @@ public class PlayerMovement : MonoBehaviour
     private bool TouchingJumpableTerrain()
     {
         return Physics2D.BoxCast(collFeet.bounds.center, collFeet.bounds.size, 0f, Vector2.down, 0.05f, jumpableTerrain);
+    }
+
+    private void StickingToAWall()
+    {
+        float wallCheckDistance = 1f;
+        RaycastHit2D wallCheckLeft = Physics2D.Raycast(transform.position, Vector2.left, wallCheckDistance, wallLayer);
+        RaycastHit2D wallCheckRight = Physics2D.Raycast(transform.position, Vector2.right, wallCheckDistance, wallLayer);
+        isTouchingWall = wallCheckLeft.collider != null || wallCheckRight.collider != null;
+
+        if (isTouchingWall && !TouchingJumpableTerrain() && xAxis != 0)
+        {
+            isStickingToWall = true;
+            rigidbodyPlayer.velocity = new Vector2(rigidbodyPlayer.velocity.x, 0);
+        }
+        else
+        {
+            isStickingToWall = false;
+        }
     }
 
 }

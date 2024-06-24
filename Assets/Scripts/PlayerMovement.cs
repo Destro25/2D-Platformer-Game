@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.U2D;
 using UnityEngine.UIElements.Experimental;
 
@@ -42,6 +43,7 @@ public class PlayerMovement : MonoBehaviour
         trailSprite = GetComponent<TrailRenderer>();
         collBody = GetComponent<BoxCollider2D>();
         collFeet = GetComponent<BoxCollider2D>();
+        LoadPlayerData();
     }
 
     private void Update()
@@ -186,4 +188,66 @@ public class PlayerMovement : MonoBehaviour
             isStickingToWall = false;
         }
     }
-}
+
+    public void SavePlayerData()
+    {
+        SpawnPoint spawn = GetComponent<SpawnPoint>();
+        int lvl = SceneManager.GetActiveScene().buildIndex;
+        if (lvl == 1)
+        {
+            SaveProgress.SavePlayer1(this, spawn);
+        }
+        else if (lvl == 2)
+        {
+            SaveProgress.SavePlayer2(this, spawn);
+        }
+        else if (lvl == 3)
+        {
+            SaveProgress.SavePlayer3(this, spawn);
+        }
+    }
+
+    public void LoadPlayerData() 
+    {
+        int lvl = SceneManager.GetActiveScene().buildIndex;
+        SaveSystem data = null;
+
+        if(lvl == 1)
+        {
+            data = SaveProgress.LoadData1();
+        }
+        else if (lvl == 2)
+        {
+            data = SaveProgress.LoadData2();
+        }
+        else if ( lvl == 3)
+        {
+            data = SaveProgress.LoadData3();
+        }
+
+
+        Vector2 positionPlayer;
+        if (data != null)
+        {
+            positionPlayer.x = data.PlayerPosition[0];
+            positionPlayer.y = data.PlayerPosition[1];
+            transform.position = positionPlayer;
+        }
+        // add the checkpoint load
+
+    }
+    /*
+    public static GameObject FindByPosition(Vector2 position, float radius = 0.1f)
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, radius);
+        foreach (Collider2D collider in colliders)
+        {
+            if (collider.gameObject != null)
+            {
+                return collider.gameObject;
+            }
+        }
+        return null;
+    }
+    */
+}   

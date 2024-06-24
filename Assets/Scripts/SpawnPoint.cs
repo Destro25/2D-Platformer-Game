@@ -48,4 +48,9 @@ public class SpawnPoint : MonoBehaviour
         }
 
     }
+
+    public Vector2 getCheckpoint()
+    {
+        return spawn;
+    }
 }

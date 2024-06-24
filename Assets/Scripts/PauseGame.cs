@@ -39,12 +39,26 @@ public class PauseGame : MonoBehaviour
     public void MainMenu()
     {
         Time.timeScale = 1f;
+        playerMovement.SavePlayerData();
         SceneManager.LoadScene("StartScreen");
     }
 
     public void Restart()
     {
         Time.timeScale = 1f;
+        int lvl = SceneManager.GetActiveScene().buildIndex;
+        if (lvl == 1)
+        {
+            SaveProgress.DeleteSaveFile1();
+        }
+        else if (lvl == 2) 
+        {
+            SaveProgress.DeleteSaveFile2();
+        }
+        else if ( lvl == 3)
+        {
+            SaveProgress.DeleteSaveFile3();
+        }
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 

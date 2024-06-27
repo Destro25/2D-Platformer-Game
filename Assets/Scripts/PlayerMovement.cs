@@ -193,37 +193,15 @@ public class PlayerMovement : MonoBehaviour
     {
         SpawnPoint spawn = GetComponent<SpawnPoint>();
         int lvl = SceneManager.GetActiveScene().buildIndex;
-        if (lvl == 1)
-        {
-            SaveProgress.SavePlayer1(this, spawn);
-        }
-        else if (lvl == 2)
-        {
-            SaveProgress.SavePlayer2(this, spawn);
-        }
-        else if (lvl == 3)
-        {
-            SaveProgress.SavePlayer3(this, spawn);
-        }
+        SaveProgress.SavePlayer(this, spawn, lvl);
     }
 
     public void LoadPlayerData() 
     {
         int lvl = SceneManager.GetActiveScene().buildIndex;
         SaveSystem data = null;
+        data = SaveProgress.LoadData(lvl);
 
-        if(lvl == 1)
-        {
-            data = SaveProgress.LoadData1();
-        }
-        else if (lvl == 2)
-        {
-            data = SaveProgress.LoadData2();
-        }
-        else if ( lvl == 3)
-        {
-            data = SaveProgress.LoadData3();
-        }
 
 
         Vector2 positionPlayer;

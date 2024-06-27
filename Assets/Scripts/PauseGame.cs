@@ -47,18 +47,7 @@ public class PauseGame : MonoBehaviour
     {
         Time.timeScale = 1f;
         int lvl = SceneManager.GetActiveScene().buildIndex;
-        if (lvl == 1)
-        {
-            SaveProgress.DeleteSaveFile1();
-        }
-        else if (lvl == 2) 
-        {
-            SaveProgress.DeleteSaveFile2();
-        }
-        else if ( lvl == 3)
-        {
-            SaveProgress.DeleteSaveFile3();
-        }
+        SaveProgress.DeleteSaveFile(lvl);
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 

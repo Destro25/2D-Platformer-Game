@@ -53,4 +53,9 @@ public class SpawnPoint : MonoBehaviour
     {
         return spawn;
     }
+
+    public void enableCheckpoint(Vector2 checkpointLocation)
+    {
+
+    }
 }

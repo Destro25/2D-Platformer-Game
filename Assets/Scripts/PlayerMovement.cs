@@ -50,7 +50,7 @@ public class PlayerMovement : MonoBehaviour
     {
         xAxis = Input.GetAxisRaw("Horizontal");
 
-        if(!isDashing) 
+        if(!isDashing && (rigidbodyPlayer.bodyType != RigidbodyType2D.Static)) 
         {
             rigidbodyPlayer.velocity = new Vector2(xAxis * moveSpeed, rigidbodyPlayer.velocity.y);
             StickingToAWall();
@@ -202,30 +202,20 @@ public class PlayerMovement : MonoBehaviour
         SaveSystem data = null;
         data = SaveProgress.LoadData(lvl);
 
-
-
-        Vector2 positionPlayer;
         if (data != null)
         {
+            Vector2 positionPlayer;
+            Vector2 positionSpawn;
+
             positionPlayer.x = data.PlayerPosition[0];
             positionPlayer.y = data.PlayerPosition[1];
             transform.position = positionPlayer;
+
+            positionSpawn.x = data.LastSpawnpoint[0];
+            positionSpawn.y = data.LastSpawnpoint[1];
+            SpawnPoint.ReactivateCheckpoint(positionSpawn);
         }
-        // add the checkpoint load
+        
 
     }
-    /*
-    public static GameObject FindByPosition(Vector2 position, float radius = 0.1f)
-    {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, radius);
-        foreach (Collider2D collider in colliders)
-        {
-            if (collider.gameObject != null)
-            {
-                return collider.gameObject;
-            }
-        }
-        return null;
-    }
-    */
 }   

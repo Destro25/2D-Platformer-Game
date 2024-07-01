@@ -54,8 +54,25 @@ public class SpawnPoint : MonoBehaviour
         return spawn;
     }
 
-    public void enableCheckpoint(Vector2 checkpointLocation)
+    public static void ReactivateCheckpoint(Vector2 position, float radius = 0.5f)
     {
 
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, radius);
+
+        if (colliders.Length > 0)
+        {
+            foreach (Collider2D collider in colliders)
+            {
+                if (collider.CompareTag("Checkpoint"))
+                {
+                    checkpointAnim = collider.GetComponent<Animator>();
+                    if (checkpointAnim.GetInteger("CheckpointState") == 0)
+                    {
+                        checkpointAnim.SetInteger("CheckpointState", 1);
+                        spawn = collider.transform.position;
+                    }
+                }
+            }
+        }
     }
 }

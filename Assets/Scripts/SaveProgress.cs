@@ -5,40 +5,37 @@ using UnityEngine;
 
 public static class SaveProgress
 {
-    public static void SavePlayer (PlayerMovement Player, SpawnPoint Spawn, int level)
+    private static string GetSaveFilePath(int level)
     {
-        BinaryFormatter formatter = new BinaryFormatter();
-        string path = Application.persistentDataPath + "/playerlvl" + level + ".sav";
-        FileStream stream = new FileStream(path, FileMode.Create);
+        return Application.persistentDataPath + "/playerlvl" + level + ".json";
+    }
 
+    public static void SavePlayer(PlayerMovement Player, SpawnPoint Spawn, int level)
+    {
+        string path = GetSaveFilePath(level);
         SaveSystem data = new SaveSystem(Player, Spawn);
-
-        formatter.Serialize(stream, data);
-        stream.Close();
+        string jsonData = JsonUtility.ToJson(data, true); // true for pretty print
+        File.WriteAllText(path, jsonData);
     }
 
     public static SaveSystem LoadData(int level)
     {
-        string path = Application.persistentDataPath + "/playerlvl" + level + ".sav";
-        if (File.Exists(path)) 
+        string path = GetSaveFilePath(level);
+        if (File.Exists(path))
         {
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
-            FileStream stream = new FileStream (path, FileMode.Open);
-
-            SaveSystem data = binaryFormatter.Deserialize(stream) as SaveSystem;
-
-            stream.Close();
-            return data;
-        }else
+            string jsonData = File.ReadAllText(path);
+            return JsonUtility.FromJson<SaveSystem>(jsonData);
+        }
+        else
         {
-            Debug.Log("Save file not found at " +  path);
+            Debug.Log("Save file not found at " + path);
             return null;
         }
     }
 
     public static void DeleteSaveFile(int level)
     {
-        string path = Application.persistentDataPath + "/playerlvl" + level + ".sav";
+        string path = Application.persistentDataPath + "/playerlvl" + level + ".json";
         if (File.Exists(path))
         {
             File.Delete(path);

@@ -94,7 +94,7 @@ public class PlayerMovement : MonoBehaviour
         }
         
 
-        if (Input.GetButtonDown("Dash") && hasWaited)
+        if (Input.GetButtonDown("Dash") && hasWaited && (rigidbodyPlayer.bodyType != RigidbodyType2D.Static))
         {
             StartCoroutine(Dash());
         }
@@ -215,7 +215,5 @@ public class PlayerMovement : MonoBehaviour
             positionSpawn.y = data.LastSpawnpoint[1];
             SpawnPoint.ReactivateCheckpoint(positionSpawn);
         }
-        
-
     }
 }   

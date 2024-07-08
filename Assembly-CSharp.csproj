@@ -61,6 +61,7 @@
     <Compile Include="Assets\Scripts\PlayerDeath.cs" />
     <Compile Include="Assets\Scripts\GameEnd.cs" />
     <Compile Include="Assets\Scripts\PauseGame.cs" />
+    <Compile Include="Assets\Scripts\UiManager.cs" />
     <Compile Include="Assets\Scripts\FollowerWaypoints.cs" />
     <Compile Include="Assets\Scripts\LevelFinishScript.cs" />
     <Compile Include="Assets\Scripts\SaveSystem.cs" />

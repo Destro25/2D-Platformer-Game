@@ -1,75 +1,48 @@
-const bcrypt = require('bcrypt');
+// /controllers/authController.js
+const express = require('express');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const pool = require('../db');
-const { jwtSecret } = require('../config/config');
+const db = require('../db');
 
-// Register User
 const registerUser = async (req, res) => {
+    const { username, password } = req.body;
+
     try {
-        const { username, password } = req.body;
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const sql = 'INSERT INTO users (username, password) VALUES (?, ?)';
+        const [result] = await db.query(sql, [username, hashedPassword]);
 
-        if (!username || !password) {
-            return res.status(400).json({ msg: "Please provide both username and password" });
-        }
-
-        // Check if user already exists
-        const userCheckQuery = 'SELECT * FROM users WHERE username = ?';
-        const [userCheckResult] = await pool.query(userCheckQuery, [username]);
-
-        if (userCheckResult.length > 0) {
-            return res.status(400).json({ msg: "User already exists" });
-        }
-
-        // Hash the password
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        // Insert new user into database
-        const insertUserQuery = 'INSERT INTO users (username, password) VALUES (?, ?)';
-        await pool.query(insertUserQuery, [username, hashedPassword]);
-
-        res.status(201).json({ msg: "User registered successfully" });
-    } catch (error) {
-        console.error("Error during user registration: ", error);
-        res.status(500).json({ msg: "Server error" });
+        const token = jwt.sign({ id: result.insertId, username: username }, 'your_jwt_secret_key', { expiresIn: '1h' });
+        res.json({ token });
+    } catch (err) {
+        console.error('Error registering user: ', err);
+        res.status(500).send('Internal server error');
     }
 };
 
-// Login User
 const loginUser = async (req, res) => {
+    const { username, password } = req.body;
+
     try {
-        const { username, password } = req.body;
+        const sql = 'SELECT * FROM users WHERE username = ?';
+        const [rows] = await db.query(sql, [username]);
 
-        if (!username || !password) {
-            return res.status(400).json({ msg: "Please provide both username and password" });
+        if (rows.length === 0) {
+            return res.status(400).send('Invalid username or password');
         }
 
-        // Check if user exists
-        const userCheckQuery = 'SELECT * FROM users WHERE username = ?';
-        const [userCheckResult] = await pool.query(userCheckQuery, [username]);
-
-        if (userCheckResult.length === 0) {
-            return res.status(400).json({ msg: "User not found" });
+        const user = rows[0];
+        const validPassword = await bcrypt.compare(password, user.password);
+        if (!validPassword) {
+            return res.status(400).send('Invalid username or password');
         }
 
-        const user = userCheckResult[0];
-        const isMatch = await bcrypt.compare(password, user.password);
-
-        if (!isMatch) {
-            return res.status(400).json({ msg: "Invalid credentials" });
-        }
-
-        // Generate JWT token
-        const token = jwt.sign({ id: user.id, username: user.username }, jwtSecret, { expiresIn: '1h' });
-
-        res.status(200).json({ token });
-    } catch (error) {
-        console.error("Error during user login: ", error);
-        res.status(500).json({ msg: "Server error" });
+        const token = jwt.sign({ id: user.id, username: user.username }, 'your_jwt_secret_key', { expiresIn: '1h' });
+        res.json({ token });
+    } catch (err) {
+        console.error('Error logging in user: ', err);
+        res.status(500).send('Internal server error');
     }
 };
 
-module.exports = {
-    registerUser,
-    loginUser
-};
+module.exports = { registerUser, loginUser };

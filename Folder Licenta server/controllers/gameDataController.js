@@ -1,40 +1,48 @@
-const pool = require('../db');
+// /controllers/gameDataController.js
+const db = require('../db');
 
-// Save Game Data
 const saveGameData = async (req, res) => {
+    const userId = req.user.id;
+    const gameData = req.body;
+
+    if (!gameData) {
+        return res.status(400).send('Game data is required');
+    }
+
     try {
-        const { userId, gameData } = req.body;
-
-        const saveGameQuery = 'INSERT INTO game_data (user_id, game_data) VALUES (?, ?) ON DUPLICATE KEY UPDATE game_data = VALUES(game_data)';
-        await pool.query(saveGameQuery, [userId, JSON.stringify(gameData)]);
-
-        res.status(200).json({ msg: "Game data saved successfully" });
-    } catch (error) {
-        console.error("Error saving game data: ", error);
-        res.status(500).json({ msg: "Server error" });
+        const sql = `
+            INSERT INTO game_data (user_id, game_data)
+            VALUES (?, ?)
+            ON DUPLICATE KEY UPDATE
+            game_data = VALUES(game_data)
+        `;
+        await db.query(sql, [userId, JSON.stringify(gameData)]);
+        res.send('Game data saved successfully');
+    } catch (err) {
+        console.error('Error saving game data: ', err);
+        res.status(500).send('Internal server error');
     }
 };
 
-// Load Game Data
 const loadGameData = async (req, res) => {
+    const userId = req.user.id;
+
     try {
-        const { userId } = req.query;
+        const sql = 'SELECT game_data FROM game_data WHERE user_id = ?';
+        const [rows] = await db.query(sql, [userId]);
 
-        const loadGameQuery = 'SELECT game_data FROM game_data WHERE user_id = ?';
-        const [gameDataResult] = await pool.query(loadGameQuery, [userId]);
-
-        if (gameDataResult.length === 0) {
-            return res.status(404).json({ msg: "Game data not found" });
+        if (rows.length > 0) {
+            res.json(JSON.parse(rows[0].game_data));
+        } else {
+            res.status(404).send('No game data found for this user');
         }
-
-        res.status(200).json(JSON.parse(gameDataResult[0].game_data));
-    } catch (error) {
-        console.error("Error loading game data: ", error);
-        res.status(500).json({ msg: "Server error" });
+    } catch (err) {
+        console.error('Error loading game data: ', err);
+        res.status(500).send('Internal server error');
     }
 };
 
 module.exports = {
     saveGameData,
-    loadGameData
+    loadGameData,
 };

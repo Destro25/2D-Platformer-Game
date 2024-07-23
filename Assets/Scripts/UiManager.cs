@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 using System.Collections;
+using System.Collections.Generic;
 
 [System.Serializable]
 public class UIManager : MonoBehaviour
@@ -118,14 +119,28 @@ public class UIManager : MonoBehaviour
         if (request.result == UnityWebRequest.Result.Success)
         {
             feedbackText.text = "Login successful!";
-            string token = request.downloadHandler.text; // Assuming the token is returned as plain text
+            string responseText = request.downloadHandler.text;
+
+            // Assuming the response text is a JSON object containing the token
+            AuthResponse authResponse = JsonUtility.FromJson<AuthResponse>(responseText);
+            string token = authResponse.token;
+
             PlayerPrefs.SetString("auth_token", token);
+            PlayerPrefs.Save();
+
+            Debug.Log("Stored Token: " + token);  // Log the stored token for debugging
         }
         else
         {
             feedbackText.text = "Error: " + request.error;
             Debug.LogError(request.downloadHandler.text);
         }
+    }
+
+    [System.Serializable]
+    public class AuthResponse
+    {
+        public string token;
     }
 
     private IEnumerator UploadSaveData()
@@ -138,8 +153,18 @@ public class UIManager : MonoBehaviour
         }
 
         string jsonData = System.IO.File.ReadAllText(saveFilePath);
+        Debug.Log("Raw JSON Data: " + jsonData);  // Debug the raw JSON data
+
         string uploadUrl = baseURL + "gameData/save";
         string token = PlayerPrefs.GetString("auth_token");
+
+        if (string.IsNullOrEmpty(token))
+        {
+            feedbackText.text = "No token found. Please log in.";
+            yield break;
+        }
+
+        Debug.Log("Token: " + token);  // Log the token for debugging
 
         UnityWebRequest request = new UnityWebRequest(uploadUrl, "POST");
         byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
@@ -157,14 +182,15 @@ public class UIManager : MonoBehaviour
         else
         {
             feedbackText.text = "Error uploading save data: " + request.error;
+            Debug.LogError(request.downloadHandler.text);  // Log server response
         }
     }
+
 
     private IEnumerator DownloadSaveData()
     {
         string downloadUrl = baseURL + "gameData/load";
         string token = PlayerPrefs.GetString("auth_token");
-
         UnityWebRequest request = UnityWebRequest.Get(downloadUrl);
         request.SetRequestHeader("Content-Type", "application/json");
         request.SetRequestHeader("x-auth-token", token);
@@ -181,6 +207,7 @@ public class UIManager : MonoBehaviour
         else
         {
             feedbackText.text = "Error downloading save data: " + request.error;
+            Debug.LogError(request.downloadHandler.text);  // Log server response
         }
     }
     public class RegistrationData

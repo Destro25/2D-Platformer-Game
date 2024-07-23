@@ -101,11 +101,17 @@ public class UIManager : MonoBehaviour
     private IEnumerator LoginUser(string username, string password)
     {
         string loginUrl = baseURL + "auth/login";
-        WWWForm form = new WWWForm();
-        form.AddField("username", username);
-        form.AddField("password", password);
 
-        UnityWebRequest request = UnityWebRequest.Post(loginUrl, form);
+        RegistrationData loginData = new RegistrationData(username, password);
+        string jsonPayload = JsonUtility.ToJson(loginData);
+
+        Debug.Log("JSON Payload for Login: " + jsonPayload);
+
+        UnityWebRequest request = new UnityWebRequest(loginUrl, "POST");
+        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonPayload);
+        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
 
         yield return request.SendWebRequest();
 
@@ -118,12 +124,13 @@ public class UIManager : MonoBehaviour
         else
         {
             feedbackText.text = "Error: " + request.error;
+            Debug.LogError(request.downloadHandler.text);
         }
     }
 
     private IEnumerator UploadSaveData()
     {
-        string saveFilePath = Application.persistentDataPath + "/savefile.json";
+        string saveFilePath = Application.persistentDataPath + "/playerlvl1.json";
         if (!System.IO.File.Exists(saveFilePath))
         {
             feedbackText.text = "No local save data found.";

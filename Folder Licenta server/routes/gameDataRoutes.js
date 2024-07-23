@@ -1,9 +1,9 @@
 const express = require('express');
-const { registerUser, loginUser } = require('../controllers/authController');
+const { saveGameData, loadGameData } = require('../controllers/gameDataController');
 
 const router = express.Router();
 
-router.post('/register', registerUser);
-router.post('/login', loginUser);
+router.post('/save', saveGameData);
+router.get('/load', loadGameData);
 
 module.exports = router;

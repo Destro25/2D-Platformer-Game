@@ -145,15 +145,11 @@ public class UIManager : MonoBehaviour
 
     private IEnumerator UploadSaveData()
     {
-        string saveFilePath = Application.persistentDataPath + "/playerlvl1.json";
-        if (!System.IO.File.Exists(saveFilePath))
-        {
-            feedbackText.text = "No local save data found.";
-            yield break;
-        }
-
-        string jsonData = System.IO.File.ReadAllText(saveFilePath);
-        //Debug.Log("Raw JSON Data: " + jsonData);  // Debug the raw JSON data
+        string[] filePaths = {
+        Application.persistentDataPath + "/playerlvl1.json",
+        Application.persistentDataPath + "/playerlvl2.json",
+        Application.persistentDataPath + "/playerlvl3.json"
+    };
 
         string uploadUrl = baseURL + "gameData/save";
         string token = PlayerPrefs.GetString("auth_token");
@@ -164,26 +160,51 @@ public class UIManager : MonoBehaviour
             yield break;
         }
 
-        //Debug.Log("Token: " + token);  // Log the token for debugging
-
-        UnityWebRequest request = new UnityWebRequest(uploadUrl, "POST");
-        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
-        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-        request.downloadHandler = new DownloadHandlerBuffer();
-        request.SetRequestHeader("Content-Type", "application/json");
-        request.SetRequestHeader("x-auth-token", token);
-
-        yield return request.SendWebRequest();
-
-        if (request.result == UnityWebRequest.Result.Success)
+        foreach (string filePath in filePaths)
         {
-            feedbackText.text = "Save data uploaded successfully!";
+            if (System.IO.File.Exists(filePath))
+            {
+                string jsonData = System.IO.File.ReadAllText(filePath);
+                int level = GetLevelFromFilePath(filePath);
+
+                //Debug.Log("Token: " + token);
+                Debug.Log("Uploading data for level: " + level);
+
+                Debug.Log(jsonData);
+
+                string formattedJson = "{\n     \"level\": " + level + ",\n"
+                    + "     \"gameData\": "
+                    + jsonData + "}";
+
+                Debug.Log(formattedJson);
+
+                UnityWebRequest request = new UnityWebRequest(uploadUrl, "POST");
+                byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(formattedJson);
+                request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                request.downloadHandler = new DownloadHandlerBuffer();
+                request.SetRequestHeader("Content-Type", "application/json");
+                request.SetRequestHeader("x-auth-token", token);
+
+                yield return request.SendWebRequest();
+
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    feedbackText.text = "Error uploading save data for level " + level + ": " + request.error;
+                    Debug.LogError(request.downloadHandler.text);
+                    yield break;
+                }
+            }
         }
-        else
-        {
-            feedbackText.text = "Error uploading save data: " + request.error;
-            Debug.LogError(request.downloadHandler.text);  // Log server response
-        }
+
+        feedbackText.text = "Save data uploaded successfully!";
+    }
+
+    private int GetLevelFromFilePath(string filePath)
+    {
+        if (filePath.Contains("playerlvl1")) return 1;
+        if (filePath.Contains("playerlvl2")) return 2;
+        if (filePath.Contains("playerlvl3")) return 3;
+        return 0;
     }
 
 
@@ -209,24 +230,37 @@ public class UIManager : MonoBehaviour
             feedbackText.text = "Save data downloaded successfully!";
             string jsonData = request.downloadHandler.text;
 
-            Debug.Log("Downloaded JSON Data: " + jsonData);  // Debug the raw JSON data
+            Debug.Log(jsonData);
 
-            // Deserialize the JSON data into the SaveSystem class
-            SaveSystem saveSystem = JsonUtility.FromJson<SaveSystem>(jsonData);
-            Debug.Log("Deserialized SaveSystem: " + JsonUtility.ToJson(saveSystem));  // Debug the deserialized object
+            jsonData = jsonData.TrimStart('[').TrimEnd(']');
 
-            // Convert the SaveSystem object back to JSON to save it to the file
-            string saveFilePath = Application.persistentDataPath + "/playerlvl1.json";
-            string formattedJson = JsonUtility.ToJson(saveSystem);
+            string[] jsonObjects = jsonData.Split(new[] { "},{" }, System.StringSplitOptions.None);
 
-            System.IO.File.WriteAllText(saveFilePath, formattedJson);
 
-            feedbackText.text = "Save data downloaded and saved locally!";
+            foreach (var jsonObject in jsonObjects)
+            {
+                Debug.Log(jsonObject);
+                string formattedJson = "{" + jsonObject + "}";
+
+                // Find the level number in the JSON object
+                int levelStartIndex = formattedJson.IndexOf("\"level\":") + "\"level\":".Length;
+                int levelEndIndex = formattedJson.IndexOf(',', levelStartIndex);
+                int level = int.Parse(formattedJson.Substring(levelStartIndex, levelEndIndex - levelStartIndex));
+
+                Debug.Log(level);
+
+                int gameDataStartIndex = formattedJson.IndexOf("\"game_data\":") + "\"game_data\":".Length;
+                string gameDataJson = formattedJson.Substring(gameDataStartIndex).TrimEnd('}') + "}";
+
+                Debug.Log(gameDataJson);
+                string saveFilePath = Application.persistentDataPath + "/playerlvl" + level + ".json";
+                System.IO.File.WriteAllText(saveFilePath, gameDataJson);
+            }
         }
         else
         {
             feedbackText.text = "Error downloading save data: " + request.error;
-            Debug.LogError(request.downloadHandler.text);  // Log server response
+            Debug.LogError(request.downloadHandler.text);
         }
     }
 

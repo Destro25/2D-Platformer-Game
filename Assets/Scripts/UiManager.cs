@@ -191,6 +191,13 @@ public class UIManager : MonoBehaviour
     {
         string downloadUrl = baseURL + "gameData/load";
         string token = PlayerPrefs.GetString("auth_token");
+
+        if (string.IsNullOrEmpty(token))
+        {
+            feedbackText.text = "No token found. Please log in.";
+            yield break;
+        }
+
         UnityWebRequest request = UnityWebRequest.Get(downloadUrl);
         request.SetRequestHeader("Content-Type", "application/json");
         request.SetRequestHeader("x-auth-token", token);
@@ -201,8 +208,20 @@ public class UIManager : MonoBehaviour
         {
             feedbackText.text = "Save data downloaded successfully!";
             string jsonData = request.downloadHandler.text;
-            string saveFilePath = Application.persistentDataPath + "/savefile.json";
-            System.IO.File.WriteAllText(saveFilePath, jsonData);
+
+            Debug.Log("Downloaded JSON Data: " + jsonData);  // Debug the raw JSON data
+
+            // Deserialize the JSON data into the SaveSystem class
+            SaveSystem saveSystem = JsonUtility.FromJson<SaveSystem>(jsonData);
+            Debug.Log("Deserialized SaveSystem: " + JsonUtility.ToJson(saveSystem));  // Debug the deserialized object
+
+            // Convert the SaveSystem object back to JSON to save it to the file
+            string saveFilePath = Application.persistentDataPath + "/playerlvl1.json";
+            string formattedJson = JsonUtility.ToJson(saveSystem);
+
+            System.IO.File.WriteAllText(saveFilePath, formattedJson);
+
+            feedbackText.text = "Save data downloaded and saved locally!";
         }
         else
         {
@@ -210,6 +229,7 @@ public class UIManager : MonoBehaviour
             Debug.LogError(request.downloadHandler.text);  // Log server response
         }
     }
+
     public class RegistrationData
     {
         public string username;

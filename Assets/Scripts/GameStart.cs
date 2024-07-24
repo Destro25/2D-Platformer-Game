@@ -31,4 +31,9 @@ public class GameStart : MonoBehaviour
     {
         SceneManager.LoadScene(0);
     }
+
+    public void SaveData()
+    {
+        SceneManager.LoadScene(6);
+    }
 }

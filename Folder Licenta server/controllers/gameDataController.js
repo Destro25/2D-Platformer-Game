@@ -28,17 +28,18 @@ const loadGameData = async (req, res) => {
     const userId = req.user.id;
 
     try {
-        const sql = 'SELECT game_data FROM game_data WHERE user_id = ?';
-        const [rows] = await db.query(sql, [userId]);
-
-        if (rows.length > 0) {
-            res.json(JSON.parse(rows[0].game_data));
-        } else {
-            res.status(404).send('No game data found for this user');
+        const [rows] = await db.query('SELECT game_data FROM game_data WHERE user_id = ?', [userId]);
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'No game data found' });
         }
-    } catch (err) {
-        console.error('Error loading game data: ', err);
-        res.status(500).send('Internal server error');
+
+        // Parse the game_data from the database, which is stored as a JSON string
+        //console.log(rows[0].game_data);
+
+        res.json(rows[0].game_data);
+    } catch (error) {
+        console.error('Error loading game data: ', error);
+        res.status(500).json({ error: 'Failed to load game data' });
     }
 };
 

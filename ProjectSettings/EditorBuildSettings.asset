@@ -26,4 +26,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Select level.unity
     guid: 92246d5ee18d0224da74029a9c5a58fb
+  - enabled: 1
+    path: Assets/Scenes/LoginScreen.unity
+    guid: 912e1c99191f4134d9515d009994da1a
   m_configObjects: {}

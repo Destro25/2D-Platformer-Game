@@ -153,7 +153,7 @@ public class UIManager : MonoBehaviour
         }
 
         string jsonData = System.IO.File.ReadAllText(saveFilePath);
-        Debug.Log("Raw JSON Data: " + jsonData);  // Debug the raw JSON data
+        //Debug.Log("Raw JSON Data: " + jsonData);  // Debug the raw JSON data
 
         string uploadUrl = baseURL + "gameData/save";
         string token = PlayerPrefs.GetString("auth_token");
@@ -164,7 +164,7 @@ public class UIManager : MonoBehaviour
             yield break;
         }
 
-        Debug.Log("Token: " + token);  // Log the token for debugging
+        //Debug.Log("Token: " + token);  // Log the token for debugging
 
         UnityWebRequest request = new UnityWebRequest(uploadUrl, "POST");
         byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);

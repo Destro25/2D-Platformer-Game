@@ -8,6 +8,7 @@ const registerUser = async (req, res) => {
     const { username, password } = req.body;
 
     try {
+        //should look at the security of the password
         const hashedPassword = await bcrypt.hash(password, 10);
         const sql = 'INSERT INTO users (username, password) VALUES (?, ?)';
         const [result] = await db.query(sql, [username, hashedPassword]);

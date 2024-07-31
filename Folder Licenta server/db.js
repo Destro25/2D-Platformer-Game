@@ -1,11 +1,10 @@
 const mysql = require('mysql2/promise');
-const { dbConfig } = require('./config/config');
 
 const pool = mysql.createPool({
-    host: dbConfig.host,
-    user: dbConfig.user,
-    password: dbConfig.password,
-    database: dbConfig.database,
+    host: 'localhost',
+    user: 'root',
+    password: '0727611934x25!',
+    database: 'game_save_db',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0

@@ -32,8 +32,6 @@ const loadGameData = async (req, res) => {
         if (rows.length === 0) {
             return res.status(404).json({ error: 'No game data found' });
         }
-        console.log(rows.length);
-        console.log(rows);
 
         res.json(rows);
     } catch (error) {

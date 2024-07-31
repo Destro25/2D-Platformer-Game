@@ -1,5 +1,5 @@
 // /controllers/authController.js
-const express = require('express');
+require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../db');
@@ -8,12 +8,21 @@ const registerUser = async (req, res) => {
     const { username, password } = req.body;
 
     try {
-        //should look at the security of the password
+        const [existingUser] = await db.query('SELECT id FROM users WHERE username = ?', [username]);
+
+        if (existingUser.length > 0) {
+            return res.status(400).json({ error: 'Username already exists' });
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
         const sql = 'INSERT INTO users (username, password) VALUES (?, ?)';
         const [result] = await db.query(sql, [username, hashedPassword]);
 
-        const token = jwt.sign({ id: result.insertId, username: username }, 'your_jwt_secret_key', { expiresIn: '1h' });
+        const token = jwt.sign(
+            { id: result.insertId, username: username },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
         res.json({ token });
     } catch (err) {
         console.error('Error registering user: ', err);
@@ -38,7 +47,10 @@ const loginUser = async (req, res) => {
             return res.status(400).send('Invalid username or password');
         }
 
-        const token = jwt.sign({ id: user.id, username: user.username }, 'your_jwt_secret_key', { expiresIn: '1h' });
+        const token = jwt.sign(
+            { id: user.id, username: user.username },
+            process.env.JWT_SECRET,
+             { expiresIn: '1h' });
         res.json({ token });
     } catch (err) {
         console.error('Error logging in user: ', err);

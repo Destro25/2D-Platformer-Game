@@ -70,13 +70,9 @@ public class UIManager : MonoBehaviour
     {
         string registerUrl = baseURL + "auth/register";
 
-        // Create an instance of the RegistrationData class
         RegistrationData registrationData = new RegistrationData(username, password);
+        string jsonPayload = JsonUtility.ToJson(registrationData); //only works with classes
 
-        // Convert the instance to JSON
-        string jsonPayload = JsonUtility.ToJson(registrationData);
-
-        Debug.Log("JSON Payload: " + jsonPayload);  // For debugging
 
         // Create UnityWebRequest
         UnityWebRequest request = new UnityWebRequest(registerUrl, "POST");
@@ -91,6 +87,15 @@ public class UIManager : MonoBehaviour
         if (request.result == UnityWebRequest.Result.Success)
         {
             feedbackText.text = "Registration successful!";
+
+            string responseText = request.downloadHandler.text;
+
+            // Assuming the response text is a JSON object containing the token
+            AuthResponse authResponse = JsonUtility.FromJson<AuthResponse>(responseText);
+            string token = authResponse.token;
+
+            PlayerPrefs.SetString("auth_token", token);
+            PlayerPrefs.Save();
         }
         else
         {
@@ -105,8 +110,6 @@ public class UIManager : MonoBehaviour
 
         RegistrationData loginData = new RegistrationData(username, password);
         string jsonPayload = JsonUtility.ToJson(loginData);
-
-        Debug.Log("JSON Payload for Login: " + jsonPayload);
 
         UnityWebRequest request = new UnityWebRequest(loginUrl, "POST");
         byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonPayload);
@@ -127,8 +130,6 @@ public class UIManager : MonoBehaviour
 
             PlayerPrefs.SetString("auth_token", token);
             PlayerPrefs.Save();
-
-            Debug.Log("Stored Token: " + token);  // Log the stored token for debugging
         }
         else
         {
@@ -167,16 +168,14 @@ public class UIManager : MonoBehaviour
                 string jsonData = System.IO.File.ReadAllText(filePath);
                 int level = GetLevelFromFilePath(filePath);
 
-                //Debug.Log("Token: " + token);
-                Debug.Log("Uploading data for level: " + level);
+                //Debug.Log("Uploading data for level: " + level);
 
-                Debug.Log(jsonData);
 
                 string formattedJson = "{\n     \"level\": " + level + ",\n"
                     + "     \"gameData\": "
                     + jsonData + "}";
 
-                Debug.Log(formattedJson);
+                //Debug.Log(formattedJson);
 
                 UnityWebRequest request = new UnityWebRequest(uploadUrl, "POST");
                 byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(formattedJson);
@@ -230,8 +229,6 @@ public class UIManager : MonoBehaviour
             feedbackText.text = "Save data downloaded successfully!";
             string jsonData = request.downloadHandler.text;
 
-            Debug.Log(jsonData);
-
             jsonData = jsonData.TrimStart('[').TrimEnd(']');
 
             string[] jsonObjects = jsonData.Split(new[] { "},{" }, System.StringSplitOptions.None);
@@ -239,7 +236,7 @@ public class UIManager : MonoBehaviour
 
             foreach (var jsonObject in jsonObjects)
             {
-                Debug.Log(jsonObject);
+                //Debug.Log(jsonObject);
                 string formattedJson = "{" + jsonObject + "}";
 
                 // Find the level number in the JSON object
@@ -247,12 +244,12 @@ public class UIManager : MonoBehaviour
                 int levelEndIndex = formattedJson.IndexOf(',', levelStartIndex);
                 int level = int.Parse(formattedJson.Substring(levelStartIndex, levelEndIndex - levelStartIndex));
 
-                Debug.Log(level);
+                //Debug.Log(level);
 
                 int gameDataStartIndex = formattedJson.IndexOf("\"game_data\":") + "\"game_data\":".Length;
                 string gameDataJson = formattedJson.Substring(gameDataStartIndex).TrimEnd('}') + "}";
 
-                Debug.Log(gameDataJson);
+                //Debug.Log(gameDataJson);
                 string saveFilePath = Application.persistentDataPath + "/playerlvl" + level + ".json";
                 System.IO.File.WriteAllText(saveFilePath, gameDataJson);
             }

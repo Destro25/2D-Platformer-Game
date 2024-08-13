@@ -74,14 +74,13 @@ public class UIManager : MonoBehaviour
         string jsonPayload = JsonUtility.ToJson(registrationData); //only works with classes
 
 
-        // Create UnityWebRequest
         UnityWebRequest request = new UnityWebRequest(registerUrl, "POST");
         byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonPayload);
         request.uploadHandler = new UploadHandlerRaw(bodyRaw);
         request.downloadHandler = new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
 
-        // Send the request and wait for a response
+
         yield return request.SendWebRequest();
 
         if (request.result == UnityWebRequest.Result.Success)
@@ -90,7 +89,6 @@ public class UIManager : MonoBehaviour
 
             string responseText = request.downloadHandler.text;
 
-            // Assuming the response text is a JSON object containing the token
             AuthResponse authResponse = JsonUtility.FromJson<AuthResponse>(responseText);
             string token = authResponse.token;
 
@@ -100,7 +98,7 @@ public class UIManager : MonoBehaviour
         else
         {
             feedbackText.text = "Error: " + request.error;
-            Debug.LogError(request.downloadHandler.text); // Log server response
+            Debug.LogError(request.downloadHandler.text); 
         }
     }
 
@@ -124,7 +122,6 @@ public class UIManager : MonoBehaviour
             feedbackText.text = "Login successful!";
             string responseText = request.downloadHandler.text;
 
-            // Assuming the response text is a JSON object containing the token
             AuthResponse authResponse = JsonUtility.FromJson<AuthResponse>(responseText);
             string token = authResponse.token;
 
@@ -239,7 +236,6 @@ public class UIManager : MonoBehaviour
                 //Debug.Log(jsonObject);
                 string formattedJson = "{" + jsonObject + "}";
 
-                // Find the level number in the JSON object
                 int levelStartIndex = formattedJson.IndexOf("\"level\":") + "\"level\":".Length;
                 int levelEndIndex = formattedJson.IndexOf(',', levelStartIndex);
                 int level = int.Parse(formattedJson.Substring(levelStartIndex, levelEndIndex - levelStartIndex));

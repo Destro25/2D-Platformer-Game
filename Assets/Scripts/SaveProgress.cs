@@ -14,7 +14,7 @@ public static class SaveProgress
     {
         string path = GetSaveFilePath(level);
         SaveSystem data = new SaveSystem(Player, Spawn);
-        string jsonData = JsonUtility.ToJson(data, true); // true for pretty print
+        string jsonData = JsonUtility.ToJson(data, true);
         File.WriteAllText(path, jsonData);
     }
 

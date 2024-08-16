@@ -681,10 +681,10 @@ AnimatorStateMachine:
     m_Position: {x: 200, y: 60, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 292610602453733730}
-    m_Position: {x: 580, y: -260, z: 0}
+    m_Position: {x: 440, y: -160, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 4884456664047368941}
-    m_Position: {x: 60, y: -260, z: 0}
+    m_Position: {x: 200, y: -160, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions:
   - {fileID: 8003314816912298510}
@@ -778,7 +778,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Empty
+  m_Name: Delay
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:

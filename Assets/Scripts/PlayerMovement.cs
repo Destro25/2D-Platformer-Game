@@ -48,6 +48,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        if(rigidbodyPlayer.linearVelocity.magnitude > 80)
+        {
+            rigidbodyPlayer.linearVelocity = Vector2.ClampMagnitude(rigidbodyPlayer.linearVelocity, 80);
+        }
         xAxis = Input.GetAxisRaw("Horizontal");
 
         if(!isDashing && (rigidbodyPlayer.bodyType != RigidbodyType2D.Static)) 

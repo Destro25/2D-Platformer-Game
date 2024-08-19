@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SpawnPoint : MonoBehaviour
 {
-    private static Vector2 spawn;
+    [SerializeField]private static Vector2 spawn;
     private static Rigidbody2D rigidbodyPlayer;
     private static Animator checkpointAnim = null;
     [SerializeField] private AudioSource checkpointTrigger;

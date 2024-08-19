@@ -52,14 +52,14 @@ public class PlayerMovement : MonoBehaviour
 
         if(!isDashing && (rigidbodyPlayer.bodyType != RigidbodyType2D.Static)) 
         {
-            rigidbodyPlayer.velocity = new Vector2(xAxis * moveSpeed, rigidbodyPlayer.velocity.y);
+            rigidbodyPlayer.linearVelocity = new Vector2(xAxis * moveSpeed, rigidbodyPlayer.linearVelocity.y);
             StickingToAWall();
             if (Input.GetButtonDown("Jump"))
             {
                 if (TouchingJumpableTerrain() || hasDoubleJumpe || hasWallJump)
                 {
                     jumpSoundEffect.Play();
-                    rigidbodyPlayer.velocity = new Vector2(rigidbodyPlayer.velocity.x, jumpPower);
+                    rigidbodyPlayer.linearVelocity = new Vector2(rigidbodyPlayer.linearVelocity.x, jumpPower);
 
                     if (!TouchingJumpableTerrain())
                     {
@@ -111,7 +111,7 @@ public class PlayerMovement : MonoBehaviour
         hasWaited = false;
 
         float dashDirection = xAxis != 0f ? xAxis : (spritePlayer.flipX ? -1f : 1f);
-        rigidbodyPlayer.velocity = new Vector2(dashSpeed * dashDirection, 0f);
+        rigidbodyPlayer.linearVelocity = new Vector2(dashSpeed * dashDirection, 0f);
         trailSprite.emitting = true;
         dashSoundEffect.Play();
         yield return new WaitForSeconds(dashTime);
@@ -150,7 +150,7 @@ public class PlayerMovement : MonoBehaviour
             status = DisplayAnimation.anim_idle;
         }
 
-        if (rigidbodyPlayer.velocity.y > 0.01f)
+        if (rigidbodyPlayer.linearVelocity.y > 0.01f)
         {
             status = DisplayAnimation.anim_jumping;
             if (hasDoubleJumpe == false)
@@ -158,7 +158,7 @@ public class PlayerMovement : MonoBehaviour
                 status = DisplayAnimation.anim_doubleJump;
             }
         }
-        else if (rigidbodyPlayer.velocity.y < -0.01f)
+        else if (rigidbodyPlayer.linearVelocity.y < -0.01f)
         {
             status = DisplayAnimation.anim_falling;
         }
@@ -181,7 +181,7 @@ public class PlayerMovement : MonoBehaviour
         if (isTouchingWall && !TouchingJumpableTerrain() && xAxis != 0)
         {
             isStickingToWall = true;
-            rigidbodyPlayer.velocity = new Vector2(rigidbodyPlayer.velocity.x, 0);
+            rigidbodyPlayer.linearVelocity = new Vector2(rigidbodyPlayer.linearVelocity.x, 0);
         }
         else
         {

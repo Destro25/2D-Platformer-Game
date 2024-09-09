@@ -11,7 +11,7 @@ const registerUser = async (req, res) => {
         const [existingUser] = await db.query('SELECT id FROM users WHERE username = ?', [username]);
 
         if (existingUser.length > 0) {
-            return res.status(400).json({ error: 'Username already exists' });
+            return res.status(400).send('Username already exists' );
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);

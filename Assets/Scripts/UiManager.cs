@@ -97,8 +97,14 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            feedbackText.text = "Error: " + request.error;
-            Debug.LogError(request.downloadHandler.text); 
+            if(request.downloadHandler.text.Length == 0)
+            {
+                feedbackText.text = "Error: " + request.error;
+            }
+            else
+            {
+                feedbackText.text = "Error: " + request.downloadHandler.text;
+            }
         }
     }
 
@@ -130,8 +136,14 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            feedbackText.text = "Error: " + request.error;
-            Debug.LogError(request.downloadHandler.text);
+            if(request.downloadHandler.text.Length == 0)
+            {
+                feedbackText.text = "Error: " + request.error;
+            }
+            else
+            {
+                feedbackText.text = "Error: " + request.downloadHandler.text;
+            }
         }
     }
 
@@ -158,10 +170,13 @@ public class UIManager : MonoBehaviour
             yield break;
         }
 
+        int files = 0;
+
         foreach (string filePath in filePaths)
         {
             if (System.IO.File.Exists(filePath))
             {
+                files++;
                 string jsonData = System.IO.File.ReadAllText(filePath);
                 int level = GetLevelFromFilePath(filePath);
 
@@ -186,13 +201,18 @@ public class UIManager : MonoBehaviour
                 if (request.result != UnityWebRequest.Result.Success)
                 {
                     feedbackText.text = "Error uploading save data for level " + level + ": " + request.error;
-                    Debug.LogError(request.downloadHandler.text);
                     yield break;
                 }
             }
         }
-
-        feedbackText.text = "Save data uploaded successfully!";
+        if (files > 0)
+        {
+            feedbackText.text = "Save data uploaded successfully!";
+        }
+        else
+        {
+            feedbackText.text = "No files to upload.";
+        }
     }
 
     private int GetLevelFromFilePath(string filePath)
@@ -253,7 +273,6 @@ public class UIManager : MonoBehaviour
         else
         {
             feedbackText.text = "Error downloading save data: " + request.error;
-            Debug.LogError(request.downloadHandler.text);
         }
     }
 
